@@ -34,9 +34,9 @@ private:
 	void rotateRightLeft(pNode parent, pNode right);
 	void rotateLeftRight(pNode parent, pNode left);
 
-	bool insertHelper(pNode node, int value);
+	bool insertHelper(pNode node, int value, pNode parent);
 	bool containsHelper(pNode node, int value);
-	int removeHelper(pNode node, int value);
+	int removeHelper(pNode node, int value, pNode parent);
 
 	void preOrderHelper(pNode node);
 	void inOrderHelper(pNode node);

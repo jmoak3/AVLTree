@@ -5,27 +5,27 @@ pNode Tree::sharedPointerHelper(Node* n)
 	return std::shared_ptr<Node>(n);
 }
 
-bool Tree::insertHelper(pNode node, int value)
+bool Tree::insertHelper(pNode node, int value, pNode parent)
 {
 	if (node->getValue() > value)
 	{
 		if (node->hasLeft())
-			return insertHelper(node->getLeft(), value);
+			return insertHelper(node->getLeft(), value, node);
 		else
 		{
 			node->setLeft(sharedPointerHelper(new Node(value)));
-			balance(root);
+			balance(parent);
 			return true;
 		}
 	}
 	else
 	{
 		if (node->hasRight())
-			return insertHelper(node->getRight(), value);
+			return insertHelper(node->getRight(), value, node);
 		else
 		{
 			node->setRight(sharedPointerHelper(new Node(value)));
-			balance(root);
+			balance(parent);
 			return true;
 		}
 	}
@@ -39,7 +39,7 @@ bool Tree::insert(int value)
 	}
 	else
 	{
-		return insertHelper(root, value);
+		return insertHelper(root, value, nullptr);
 	}
 }
 
@@ -55,8 +55,7 @@ bool Tree::contains(int value)
 	return containsHelper(root, value);
 }
 
-
-int Tree::removeHelper(pNode node, int value)
+int Tree::removeHelper(pNode node, int value, pNode parent)
 {
 	if (node == nullptr)
 	{
@@ -71,25 +70,25 @@ int Tree::removeHelper(pNode node, int value)
 			if (leftNode->hasRight())
 			{
 				node->setLeft(leftNode->getRight());
-				balance(root);
+				balance(parent);
 				return value;
 			}
 			else if (leftNode->hasLeft())
 			{
 				node->setLeft(leftNode->getLeft());
-				balance(root);
+				balance(parent);
 				return value;
 			}
 			else
 			{
 				node->setLeft(nullptr);
-				balance(root);
+				balance(parent);
 				return value;
 			}
 		}
 		else
 		{
-			return removeHelper(leftNode, value);
+			return removeHelper(leftNode, value, parent);
 		}
 	}
 	else if (node->hasRight())
@@ -100,25 +99,25 @@ int Tree::removeHelper(pNode node, int value)
 			if (rightNode->hasRight())
 			{
 				node->setRight(rightNode->getRight());
-				balance(root);
+				balance(parent);
 				return value;
 			}
 			else if (rightNode->hasLeft())
 			{
 				node->setRight(rightNode->getLeft());
-				balance(root);
+				balance(parent);
 				return value;
 			}
 			else
 			{
 				node->setRight(nullptr);
-				balance(root);
+				balance(parent);
 				return value;
 			}
 		}
 		else
 		{
-			return removeHelper(rightNode, value);
+			return removeHelper(rightNode, value, parent);
 		}
 	}
 	else
@@ -153,7 +152,7 @@ int Tree::remove(int value)
 			return value;
 		}
 	}
-	else return removeHelper(root, value);
+	else return removeHelper(root, value, nullptr);
 }
 
 int Tree::getMax() const
@@ -252,6 +251,8 @@ int Tree::calcBalance(pNode node)
 
 void Tree::balance(pNode node)
 {
+	if (node == nullptr) return;
+
 	if (node->hasLeft())
 		balance(node->getLeft());
 	if (node->hasRight())
